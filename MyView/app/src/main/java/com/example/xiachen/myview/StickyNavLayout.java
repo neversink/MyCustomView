@@ -86,6 +86,6 @@ public class StickyNavLayout extends LinearLayout{
 
 
 
-        return false;
+        return true;
     }
 }
