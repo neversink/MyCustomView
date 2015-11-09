@@ -20,7 +20,7 @@ import android.widget.ScrollView;
 /**
  * Created by xiachen on 15/11/5.
  */
-public class StickyNavLayout extends LinearLayout {
+public class StickyNavLayout2 extends LinearLayout {
     private View mTop;
     private View mNav;
     private ViewPager mViewPager;
@@ -36,9 +36,9 @@ public class StickyNavLayout extends LinearLayout {
 
     private float mLastY;
     private boolean mDragging;
-    private boolean isInControl;
+    private boolean isInControl = false;
 
-    public StickyNavLayout(Context context, AttributeSet attrs) {
+    public StickyNavLayout2(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mScroller = new OverScroller(context);
@@ -80,6 +80,8 @@ public class StickyNavLayout extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.w("------", "onTouchEvent" + event.getAction());
+        initVelocityTrackerIfNotExists();
         mVelocityTracker.addMovement(event);
         int action = event.getAction();
         float y = event.getY();
@@ -99,7 +101,7 @@ public class StickyNavLayout extends LinearLayout {
                 if (mDragging) {
                     scrollBy(0, -((int) dy));
 
-                    if (getScrollY() == mTopViewHeight) {
+                    if (getScrollY() == mTopViewHeight && dy < 0) {
                         event.setAction(MotionEvent.ACTION_DOWN);
                         dispatchTouchEvent(event);
                         isInControl = false;
@@ -109,7 +111,7 @@ public class StickyNavLayout extends LinearLayout {
                 break;
             case MotionEvent.ACTION_CANCEL:
                 mDragging = false;
-//                recycleVelocityTracker();
+                recycleVelocityTracker();
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
                 }
@@ -159,6 +161,7 @@ public class StickyNavLayout extends LinearLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int action = ev.getAction();
+        Log.w("------", "onInterceptTouchEvent" + ev.getAction());
         float y = ev.getY();
 
         switch (action) {
@@ -168,9 +171,15 @@ public class StickyNavLayout extends LinearLayout {
             case MotionEvent.ACTION_MOVE:
                 float dy = y - mLastY;
                 getCurrentScrollView();
+//                Log.w("-", "here?" + dy);
                 if (Math.abs(dy) > mTouchSlop) {
+                    mDragging = true;
+//                    Log.w("-", "isTopHidden2: rollView.getScrollY()2: " + mInnerScrollView.getScrollY() + "\n" +
+//                                    "dy2: " + dy + "\n"
+//                    );
+                    Log.w("------", "dy vs slop: " + dy + "  " + mTouchSlop);
                     if (!isTopHidden || (isTopHidden && dy > 0 && mInnerScrollView.getScrollY() == 0)) {
-                        mDragging = true;
+                        Log.w("------", "reach here?");
                         mLastY = y;
                         return true;
                     }
@@ -187,32 +196,34 @@ public class StickyNavLayout extends LinearLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-//        int action = ev.getAction();
-//        float y = ev.getY();
-//        switch (action) {
-//            case MotionEvent.ACTION_DOWN:
-//                mLastY = y;
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                float dy = y - mLastY;
-//                getCurrentScrollView();
-//                if (mInnerScrollView instanceof ScrollView) {
-//                    if (isTopHidden && mInnerScrollView.getScaleY() == 0 && !isInControl && dy > 0) {
-//                        isInControl = true;
-//                        ev.setAction(MotionEvent.ACTION_CANCEL);
-//                        dispatchTouchEvent(ev);
-//                        MotionEvent ev2 = MotionEvent.obtain(ev);
-//                        ev2.setAction(MotionEvent.ACTION_DOWN);
-//                        return dispatchTouchEvent(ev2);
-//                    }
-//                }
-//                break;
-//        }
+        Log.w("------", "dispatchTouchEvent" + ev.getAction());
+        int action = ev.getAction();
+        float y = ev.getY();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mLastY = y;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float dy = y - mLastY;
+                getCurrentScrollView();
+                if (mInnerScrollView instanceof ScrollView) {
+                    if (isTopHidden && mInnerScrollView.getScrollY() == 0 && dy > 0 && !isInControl) {
+                        isInControl = true;
+                        ev.setAction(MotionEvent.ACTION_CANCEL);
+                        MotionEvent ev2 = MotionEvent.obtain(ev);
+                        dispatchTouchEvent(ev);
+                        ev2.setAction(MotionEvent.ACTION_DOWN);
+                        Log.w("------", "new dispatchtouchevent send");
+                        return dispatchTouchEvent(ev2);
+                    }
+                }
+                break;
+        }
         return super.dispatchTouchEvent(ev);
+//        return true;
     }
 
     private void getCurrentScrollView() {
-
         int currentItem = mViewPager.getCurrentItem();
         PagerAdapter a = mViewPager.getAdapter();
         if (a instanceof FragmentPagerAdapter) {
@@ -225,5 +236,18 @@ public class StickyNavLayout extends LinearLayout {
             mInnerScrollView = (ScrollView) item.getView().findViewById(R.id.id_stickynavlayout_innerscrollview);
         }
 
+    }
+
+    private void initVelocityTrackerIfNotExists() {
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+    }
+
+    private void recycleVelocityTracker() {
+        if (mVelocityTracker != null) {
+            mVelocityTracker.clear();
+            mVelocityTracker = null;
+        }
     }
 }

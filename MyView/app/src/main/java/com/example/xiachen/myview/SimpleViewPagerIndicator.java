@@ -167,7 +167,7 @@ public class SimpleViewPagerIndicator extends LinearLayout {
                         "offset = " + offset + "\n" +
                         "tabWidth = " + tabWidth
         );
-        if (offset > 0 && position >= (mTabVisibleCount - 2) && getChildCount() > mTabVisibleCount && position < getChildCount() -2) {
+        if (offset > 0 && position >= (mTabVisibleCount - 2) && getChildCount() > mTabVisibleCount && position < getChildCount() - 2) {
             if (mTabVisibleCount != 1) {
                 this.scrollTo((position - (mTabVisibleCount - 2)) * tabWidth + (int) (tabWidth * offset), 0);
             } else {
@@ -219,6 +219,12 @@ public class SimpleViewPagerIndicator extends LinearLayout {
 
             for (String title : mTabTitles) {
                 addView(generateTextView(title));
+            }
+            if (getChildCount() < mTabVisibleCount) {
+                Log.w("++", "mTabVisibleCount" + mTabVisibleCount + "\n" +
+                                "getChildCount()" + getChildCount() + "\n");
+                mTabVisibleCount = getChildCount();
+
             }
             setItemClickEvent();
         }

@@ -22,17 +22,21 @@ public class StickyNavLayoutActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.stickynavlayout);
         initViews();
         initDatas();
         initEvents();
     }
 
     private void initViews() {
-
+        mIndicator = (SimpleViewPagerIndicator) findViewById(R.id.id_stickynavlayout_indicator);
+        mViewPager = (ViewPager) findViewById(R.id.id_stickynavlayout_viewpager);
+        mIndicator.setViewPager(mViewPager, 1);
     }
 
     private void initDatas() {
         mIndicator.setTabItemTitles(mTitles);
+
 
         for (int i = 0; i < mTitles.size(); i++)
         {
@@ -60,8 +64,6 @@ public class StickyNavLayoutActivity extends AppCompatActivity{
     }
 
     private void initEvents() {
-        mIndicator = (SimpleViewPagerIndicator) findViewById(R.id.id_stickynavlayout_indicator);
-        mViewPager = (ViewPager) findViewById(R.id.id_stickynavlayout_viewpager);
-        mIndicator.setViewPager(mViewPager, 1);
+
     }
 }
