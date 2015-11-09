@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class ViewPagerIndicatorActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.viewpagerindicatorlayout);
+        setContentView(R.layout.activityviewpagerindicatorlayout);
 
         initView();
         initDatas();
