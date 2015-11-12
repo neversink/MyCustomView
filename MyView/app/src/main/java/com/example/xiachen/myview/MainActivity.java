@@ -8,8 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private LuckyPanView mLuckyPanView;
+    private ImageView mStartBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,31 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+
+            }
+        });
+
+        mLuckyPanView = (LuckyPanView) findViewById(R.id.id_luckypan);
+        mStartBtn = (ImageView) findViewById(R.id.id_start_btn);
+        mStartBtn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (!mLuckyPanView.isStart())
+                {
+                    mStartBtn.setImageResource(R.drawable.stop);
+                    mLuckyPanView.luckyStart(1);
+                } else
+                {
+                    if (!mLuckyPanView.isShouldEnd())
+
+                    {
+                        mStartBtn.setImageResource(R.drawable.start);
+                        mLuckyPanView.luckyEnd();
+                    }
+                }
             }
         });
     }
